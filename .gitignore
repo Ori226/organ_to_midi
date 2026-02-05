@@ -1,0 +1,16 @@
+# Build directories
+build/
+build_temp/
+.pio/
+
+# Local tools
+bin/
+
+# Artifacts
+*.hex
+*.elf
+*.bin
+
+# Temporary files
+*.tmp
+.DS_Store

@@ -1,0 +1,222 @@
+{
+  "version": 1,
+  "author": "Anonymous maker",
+  "editor": "wokwi",
+  "parts": [
+    {
+      "type": "wokwi-arduino-uno",
+      "id": "uno",
+      "top": 240,
+      "left": 48,
+      "attrs": {}
+    },
+    {
+      "type": "wokwi-74hc165",
+      "id": "piso",
+      "top": 123.6,
+      "left": 341.44,
+      "attrs": {}
+    },
+    {
+      "type": "wokwi-pushbutton",
+      "id": "btn1",
+      "top": -48,
+      "left": 211,
+      "attrs": {
+        "color": "red"
+      }
+    },
+    {
+      "type": "wokwi-pushbutton",
+      "id": "btn2",
+      "top": -48,
+      "left": 288,
+      "attrs": {
+        "color": "green"
+      }
+    },
+    {
+      "type": "wokwi-pushbutton",
+      "id": "btn3",
+      "top": -48,
+      "left": 364,
+      "attrs": {
+        "color": "blue"
+      }
+    },
+    {
+      "type": "wokwi-led",
+      "id": "led1",
+      "top": 124,
+      "left": -76,
+      "attrs": {
+        "color": "red"
+      }
+    },
+    {
+      "type": "wokwi-led",
+      "id": "led2",
+      "top": 172,
+      "left": -76,
+      "attrs": {
+        "color": "green"
+      }
+    },
+    {
+      "type": "wokwi-led",
+      "id": "led3",
+      "top": 220,
+      "left": -76,
+      "attrs": {
+        "color": "blue"
+      }
+    }
+  ],
+  "connections": [
+    [
+      "uno:GND.1",
+      "piso:GND",
+      "black",
+      [
+        "v0"
+      ]
+    ],
+    [
+      "uno:5V",
+      "piso:VCC",
+      "red",
+      [
+        "v0"
+      ]
+    ],
+    [
+      "uno:GND.1",
+      "piso:CE",
+      "black",
+      [
+        "v0"
+      ]
+    ],
+    [
+      "uno:9",
+      "piso:PL",
+      "orange",
+      [
+        "v0"
+      ]
+    ],
+    [
+      "uno:13",
+      "piso:CP",
+      "blue",
+      [
+        "v0"
+      ]
+    ],
+    [
+      "uno:12",
+      "piso:Q7",
+      "green",
+      [
+        "v0"
+      ]
+    ],
+    [
+      "piso:VCC",
+      "btn1:1.L",
+      "red",
+      [
+        "v0"
+      ]
+    ],
+    [
+      "piso:VCC",
+      "btn2:1.L",
+      "red",
+      [
+        "v0"
+      ]
+    ],
+    [
+      "piso:VCC",
+      "btn3:1.L",
+      "red",
+      [
+        "v0"
+      ]
+    ],
+    [
+      "btn1:2.L",
+      "piso:D0",
+      "gray",
+      [
+        "v0"
+      ]
+    ],
+    [
+      "btn2:2.L",
+      "piso:D1",
+      "gray",
+      [
+        "v0"
+      ]
+    ],
+    [
+      "btn3:2.L",
+      "piso:D2",
+      "gray",
+      [
+        "v0"
+      ]
+    ],
+    [
+      "uno:2",
+      "led1:A",
+      "red",
+      [
+        "v0"
+      ]
+    ],
+    [
+      "uno:3",
+      "led2:A",
+      "green",
+      [
+        "v0"
+      ]
+    ],
+    [
+      "uno:4",
+      "led3:A",
+      "blue",
+      [
+        "v0"
+      ]
+    ],
+    [
+      "uno:GND.2",
+      "led1:K",
+      "black",
+      [
+        "v0"
+      ]
+    ],
+    [
+      "uno:GND.2",
+      "led2:K",
+      "black",
+      [
+        "v0"
+      ]
+    ],
+    [
+      "uno:GND.2",
+      "led3:K",
+      "black",
+      [
+        "v0"
+      ]
+    ]
+  ],
+  "dependencies": {}
+}
