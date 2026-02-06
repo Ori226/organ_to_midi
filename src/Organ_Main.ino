@@ -1,87 +1,43 @@
-/**
- * Orla Pedalboard - Phase 1 Simulation
- * Features: 1ms Polling, 5ms Debounce, Edge Detection
- * Based on Uri Shaked's Wiring (Data:2, Clock:3, Latch:4)
- */
+#include <SPI.h>
 
-// Pin Definitions based on your provided JSON
-const int dataPin  = 2;   /* Q7 Serial Output */
-const int clockPin = 3;   /* CP Clock Pulse   */
-const int latchPin = 4;   /* PL Parallel Load */
-
-// Configuration
-const int numBits = 8;               /* Number of inputs to scan */
-const unsigned long scanInterval = 1000; /* 1ms in microseconds */
-const int debounceThreshold = 5;     /* Required stable samples for 5ms debounce */
-
-// State Tracking
-unsigned long lastScanTime = 0;
-uint8_t stableState = 0;             /* Current debounced state of all 8 bits */
-uint8_t counters[numBits] = {0};     /* Stability counters for each input */
+const int LATCH_PIN = 10;
+const int MISO_PIN  = 12;
 
 void setup() {
   Serial.begin(115200);
-  pinMode(dataPin, INPUT);
-  pinMode(clockPin, OUTPUT);
-  pinMode(latchPin, OUTPUT);
+  SPI.begin();
+  // Using Mode 0 (Standard)
+  SPI.beginTransaction(SPISettings(1000000, MSBFIRST, SPI_MODE0));
   
-  digitalWrite(latchPin, HIGH);
-  Serial.println("System Ready: English Logic / 5ms Debounce / Polled at 1kHz");
+  pinMode(LATCH_PIN, OUTPUT);
+  pinMode(MISO_PIN, INPUT);
+  digitalWrite(LATCH_PIN, HIGH);
 }
 
 void loop() {
-  unsigned long currentTime = micros();
+  // 1. Snapshot
+  digitalWrite(LATCH_PIN, LOW);
+  delayMicroseconds(5);
+  digitalWrite(LATCH_PIN, HIGH);
 
-  // Task Scheduler: Run scan exactly every 1000 microseconds
-  if (currentTime - lastScanTime >= scanInterval) {
-    lastScanTime = currentTime;
+  // 2. Capture the 'lost' bit (D7) before SPI takes over
+  bool d7 = digitalRead(MISO_PIN);
 
-    // Step 1: Capture Parallel Inputs (Snapshot)
-    digitalWrite(latchPin, LOW);
-    digitalWrite(latchPin, HIGH);
+  // 3. Get the remaining bits via SPI
+  uint8_t rawData = SPI.transfer(0x00);
 
-    // Step 2: Shift and Process each Bit
-    for (int i = 0; i < numBits; i++) {
-      int currentBit = digitalRead(dataPin);
+  // 4. Reconstruct the byte
+  // We take the rawData, shift it right by 1 to align it, 
+  // then drop our manual D7 into the most significant bit (MSB)
+  uint8_t correctedData = (rawData >> 1); 
+  if (d7 == HIGH) correctedData |= 0x80; 
 
-      // --- Debounce & Edge Detection Logic ---
-      
-      // Determine if this bit differs from our current stable state
-      bool isDifferent = (currentBit != ((stableState >> i) & 1));
-
-      if (isDifferent) {
-        counters[i]++; // Increment counter if state is transitioning/noisy
-        
-        if (counters[i] >= debounceThreshold) {
-          // Threshold reached: Confirm the state change
-          if (currentBit == HIGH) {
-            handleEdge(i, true);  // Rising Edge
-            stableState |= (1 << i);
-          } else {
-            handleEdge(i, false); // Falling Edge
-            stableState &= ~(1 << i);
-          }
-          counters[i] = 0; // Reset counter after confirmation
-        }
-      } else {
-        // Signal matches stable state, reset counter to suppress noise
-        counters[i] = 0;
-      }
-
-      // Pulse clock to shift in the next bit for the next iteration
-      digitalWrite(clockPin, HIGH);
-      digitalWrite(clockPin, LOW);
-    }
+  // Print corrected binary
+  Serial.print("Corrected Byte: ");
+  for (int i = 7; i >= 0; i--) {
+    Serial.print(bitRead(correctedData, i));
   }
-}
+  Serial.println();
 
-/**
- * Triggered only once per state change (On Press / On Release)
- */
-void handleEdge(int bitIndex, bool state) {
-  if (state) {
-    Serial.print("Bit "); Serial.print(bitIndex); Serial.println(": HIGH [Logic Change]");
-  } else {
-    Serial.print("Bit "); Serial.print(bitIndex); Serial.println(": LOW [Logic Change]");
-  }
+  delay(200);
 }
