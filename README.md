@@ -60,4 +60,75 @@ A basic circuit was implemented to verify the Wokwi environment and simulating i
 2.  **Code Behavior**: 
     *   The sketch (`src/Organ_Main.ino`) blinks Pin 13 (ON for 1s, OFF for 4s).
 3.  **Result**: 
-    *   The LED will only physically blink when the button is held down, gating the signal from Pin 13.
+
+## PISO Shift Register (74HC165) Implementation
+
+The project now uses a **74HC165** Parallel-In Serial-Out shift register to read the inputs (DIP Switches).
+
+### SPI Logic
+To achieve high-speed reading, the simulation uses the standard **SPI library**:
+*   **Protocol**: SPI Mode 0, 1MHz Clock, MSB First.
+*   **Connections**:
+    *   **LATCH** (PL) -> Pin 10
+    *   **CLOCK** (CP) -> Pin 13 (SCK)
+    *   **DATA** (Q7) -> Pin 12 (MISO)
+*   **The "D7" Quirk**: The 74HC165 outputs the last bit (D7) immediately upon latching. Since SPI reads *during* cloud pulses, we manually read Pin 12 (MISO) *before* starting the SPI transfer to capture D7, then combine it with the shifted byte.
+
+## MIDI Integration
+
+The simulation outputs standard MIDI data via the Serial port.
+*   **Mapping**: Switches D0-D7 -> MIDI Notes 60-67 (C4-G4).
+*   **Velocity**: Fixed at 127.
+*   **Protocol**: Standard Serial MIDI (31250 baud) via `MIDI.h`.
+
+### Connecting Simulation to Host MIDI (Yoshimi/DAW)
+
+The easiest way to connect the simulation to your computer's MIDI system is using the included **Python Bridge**.
+
+1.  **Expose Serial Port**: 
+    The `wokwi.toml` is configured to forward serial data to localhost:4000.
+    ```toml
+    rfc2217 = { port = 4000 }
+    ```
+
+2.  **Install Python Dependencies**:
+    You need `mido` and `python-rtmidi` to create virtual MIDI ports.
+    ```bash
+    pip install mido python-rtmidi
+    ```
+
+3.  **Run the Bridge**:
+    When the Wokwi simulation is running, execute:
+    ```bash
+    python3 midi_bridge.py
+    ```
+    This will create a MIDI input named **"Wokwi Bridge"**.
+
+4.  **Connect**: 
+    Open Yoshimi (or any synth), go to Settings -> MIDI, and select **"Wokwi Bridge"** as the input.
+
+
+
+### Prerequisites: Installing Yoshimi (Synthesizer)
+You need a software synthesizer to make sound.
+```bash
+sudo apt install yoshimi
+```
+
+### Option 2: Mock Simulation (Python Only)
+If you cannot connect Wokwi to MIDI, use the mock script to verify your Linux MIDI setup.
+
+**How it works:**
+The `mock_organ.py` script uses the `mido` library to talk to the Linux sound system (ALSA).
+1.  **Virtual Port**: It asks the OS to create a new "software cable" (Virtual MIDI Port) named "Organ Mock".
+2.  **Message Generation**: Inside a loop, it constructs digital MIDI packets (e.g., `Note On, Key 60, Velocity 127`).
+3.  **Transmission**: It pushes these packets into the software cable.
+4.  **Reception**: When you connect Yoshimi to "Organ Mock", Yoshimi listens to the other end of that cable and plays the audio samples.
+
+1.  Run the mock script:
+    ```bash
+    python3 mock_organ.py
+    ```
+2.  Connect Yoshimi to the **"Organ Mock"** MIDI input.
+3.  You should hear a C Major scale.
+
