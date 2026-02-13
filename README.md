@@ -132,3 +132,6 @@ The `mock_organ.py` script uses the `mido` library to talk to the Linux sound sy
 2.  Connect Yoshimi to the **"Organ Mock"** MIDI input.
 3.  You should hear a C Major scale.
 
+## Examples
+See the [examples/](examples/) directory for isolated test sketches.
+*   [Rhythm Simulation (rhythm_sim.ino)](examples/README.md): Plays a MIDI pattern to verify the audio pipeline.
