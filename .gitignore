@@ -15,3 +15,17 @@ bin/
 *.tmp
 .DS_Store
 diagram copy.json
+
+# Python
+__pycache__/
+*.py[cod]
+venv/
+.venv/
+env/
+
+# Logs
+*.log
+
+# VSCode / Editor
+.vscode/
+.idea/
