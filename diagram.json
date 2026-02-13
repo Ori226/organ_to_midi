@@ -1,351 +1,222 @@
 {
   "version": 1,
-  "author": "Gemini AI - SPI Updated",
+  "author": "Anonymous maker",
   "editor": "wokwi",
   "parts": [
     {
       "type": "wokwi-arduino-uno",
       "id": "uno",
-      "top": -41.14,
-      "left": 32.68,
+      "top": 240,
+      "left": 48,
       "attrs": {}
     },
     {
       "type": "wokwi-74hc165",
-      "id": "sr1",
-      "top": -121.05,
-      "left": 145.07,
+      "id": "piso",
+      "top": 123.6,
+      "left": 341.44,
       "attrs": {}
     },
     {
-      "type": "wokwi-slide-switch",
-      "id": "sw8",
-      "top": -201.18,
-      "left": 0,
-      "attrs": {}
+      "type": "wokwi-pushbutton",
+      "id": "btn1",
+      "top": -48,
+      "left": 211,
+      "attrs": {
+        "color": "red"
+      }
     },
     {
-      "type": "wokwi-slide-switch",
-      "id": "sw7",
-      "top": -201.18,
-      "left": 40,
-      "attrs": {}
+      "type": "wokwi-pushbutton",
+      "id": "btn2",
+      "top": -48,
+      "left": 288,
+      "attrs": {
+        "color": "green"
+      }
     },
     {
-      "type": "wokwi-slide-switch",
-      "id": "sw6",
-      "top": -201.18,
-      "left": 80,
-      "attrs": {}
+      "type": "wokwi-pushbutton",
+      "id": "btn3",
+      "top": -48,
+      "left": 364,
+      "attrs": {
+        "color": "blue"
+      }
     },
     {
-      "type": "wokwi-slide-switch",
-      "id": "sw5",
-      "top": -201.18,
-      "left": 120,
-      "attrs": {}
+      "type": "wokwi-led",
+      "id": "led1",
+      "top": 124,
+      "left": -76,
+      "attrs": {
+        "color": "red"
+      }
     },
     {
-      "type": "wokwi-slide-switch",
-      "id": "sw4",
-      "top": -201.18,
-      "left": 160,
-      "attrs": {}
+      "type": "wokwi-led",
+      "id": "led2",
+      "top": 172,
+      "left": -76,
+      "attrs": {
+        "color": "green"
+      }
     },
     {
-      "type": "wokwi-slide-switch",
-      "id": "sw3",
-      "top": -201.18,
-      "left": 200,
-      "attrs": {}
-    },
-    {
-      "type": "wokwi-slide-switch",
-      "id": "sw2",
-      "top": -201.18,
-      "left": 240,
-      "attrs": {}
-    },
-    {
-      "type": "wokwi-slide-switch",
-      "id": "sw1",
-      "top": -201.18,
-      "left": 280,
-      "attrs": {}
+      "type": "wokwi-led",
+      "id": "led3",
+      "top": 220,
+      "left": -76,
+      "attrs": {
+        "color": "blue"
+      }
     }
   ],
   "connections": [
     [
-      "sr1:D7",
-      "sw8:2",
-      "green",
+      "uno:GND.1",
+      "piso:GND",
+      "black",
       [
-        "v24",
-        "h-114"
+        "v0"
       ]
     ],
     [
-      "sr1:D6",
-      "sw7:2",
-      "green",
+      "uno:5V",
+      "piso:VCC",
+      "red",
       [
-        "v18",
-        "h-114"
+        "v0"
       ]
     ],
     [
-      "sr1:D5",
-      "sw6:2",
-      "green",
+      "uno:GND.1",
+      "piso:CE",
+      "black",
       [
-        "v12",
-        "h-80"
+        "v0"
       ]
     ],
     [
-      "sr1:D4",
-      "sw5:2",
-      "green",
-      [
-        "v8",
-        "h-45"
-      ]
-    ],
-    [
-      "sr1:D3",
-      "sw4:2",
-      "green",
-      [
-        "v-26",
-        "h7"
-      ]
-    ],
-    [
-      "sr1:D2",
-      "sw3:2",
-      "green",
-      [
-        "v-20",
-        "h21"
-      ]
-    ],
-    [
-      "sr1:D1",
-      "sw2:2",
-      "green",
-      [
-        "v-16",
-        "h61"
-      ]
-    ],
-    [
-      "sr1:D0",
-      "sw1:2",
-      "green",
-      [
-        "v-10",
-        "h82"
-      ]
-    ],
-    [
-      "sr1:PL",
-      "uno:10",
+      "uno:9",
+      "piso:PL",
       "orange",
       [
-        "v36",
-        "h13"
+        "v0"
       ]
     ],
     [
-      "sr1:CP",
       "uno:13",
-      "purple",
+      "piso:CP",
+      "blue",
       [
-        "v30",
-        "h-22"
+        "v0"
       ]
     ],
     [
-      "sr1:Q7",
       "uno:12",
-      "magenta",
+      "piso:Q7",
+      "green",
       [
-        "v-4",
-        "h0"
+        "v0"
       ]
     ],
     [
-      "uno:GND.1",
-      "sw8:1",
-      "black",
-      [
-        "v-16",
-        "h0"
-      ]
-    ],
-    [
-      "sw8:1",
-      "sw7:1",
-      "black",
-      [
-        "v7",
-        "h0"
-      ]
-    ],
-    [
-      "sw7:1",
-      "sw6:1",
-      "black",
-      [
-        "v7",
-        "h0"
-      ]
-    ],
-    [
-      "sw6:1",
-      "sw5:1",
-      "black",
-      [
-        "v7",
-        "h0"
-      ]
-    ],
-    [
-      "sw5:1",
-      "sw4:1",
-      "black",
-      [
-        "v7",
-        "h0"
-      ]
-    ],
-    [
-      "sw4:1",
-      "sw3:1",
-      "black",
-      [
-        "v7",
-        "h0"
-      ]
-    ],
-    [
-      "sw3:1",
-      "sw2:1",
-      "black",
-      [
-        "v7",
-        "h0"
-      ]
-    ],
-    [
-      "sw2:1",
-      "sw1:1",
-      "black",
-      [
-        "v7",
-        "h0"
-      ]
-    ],
-    [
-      "sw1:3",
-      "uno:5V",
+      "piso:VCC",
+      "btn1:1.L",
       "red",
       [
-        "v12",
-        "h21",
-        "v335",
-        "h0"
+        "v0"
       ]
     ],
     [
-      "sw1:3",
-      "sw2:3",
+      "piso:VCC",
+      "btn2:1.L",
       "red",
       [
-        "v12",
-        "h0"
+        "v0"
       ]
     ],
     [
-      "sw2:3",
-      "sw3:3",
+      "piso:VCC",
+      "btn3:1.L",
       "red",
       [
-        "v12",
-        "h0"
+        "v0"
       ]
     ],
     [
-      "sw3:3",
-      "sw4:3",
+      "btn1:2.L",
+      "piso:D0",
+      "gray",
+      [
+        "v0"
+      ]
+    ],
+    [
+      "btn2:2.L",
+      "piso:D1",
+      "gray",
+      [
+        "v0"
+      ]
+    ],
+    [
+      "btn3:2.L",
+      "piso:D2",
+      "gray",
+      [
+        "v0"
+      ]
+    ],
+    [
+      "uno:2",
+      "led1:A",
       "red",
       [
-        "v12",
-        "h0"
+        "v0"
       ]
     ],
     [
-      "sw4:3",
-      "sw5:3",
-      "red",
+      "uno:3",
+      "led2:A",
+      "green",
       [
-        "v12",
-        "h0"
+        "v0"
       ]
     ],
     [
-      "sw5:3",
-      "sw6:3",
-      "red",
+      "uno:4",
+      "led3:A",
+      "blue",
       [
-        "v12",
-        "h0"
+        "v0"
       ]
     ],
     [
-      "sw6:3",
-      "sw7:3",
-      "red",
-      [
-        "v12",
-        "h0"
-      ]
-    ],
-    [
-      "sw7:3",
-      "sw8:3",
-      "red",
-      [
-        "v12",
-        "h0"
-      ]
-    ],
-    [
-      "sr1:VCC",
-      "sw5:3",
-      "red",
-      [
-        "v-34",
-        "h165"
-      ]
-    ],
-    [
-      "sr1:CE",
-      "sw4:1",
+      "uno:GND.2",
+      "led1:K",
       "black",
       [
-        "v-39",
-        "h158"
+        "v0"
       ]
     ],
     [
-      "sr1:GND",
-      "uno:GND.1",
+      "uno:GND.2",
+      "led2:K",
       "black",
       [
-        "v42",
-        "h-233"
+        "v0"
+      ]
+    ],
+    [
+      "uno:GND.2",
+      "led3:K",
+      "black",
+      [
+        "v0"
       ]
     ]
-  ]
+  ],
+  "dependencies": {}
 }
