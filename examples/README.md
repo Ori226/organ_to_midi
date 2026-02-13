@@ -58,5 +58,20 @@ Follow the same steps as above, but use `button_piano.ino`:
 ```bash
 # Verify wiring first!
 cp examples/button_piano.ino src/main.cpp
+
+## `three_buttons_direct.ino`
+**Description**: Triggers MIDI Notes 60, 61, 62 using 3 separate buttons.
+**Purpose**: Easy development setup for testing chords or sequences without shift registers.
+
+### Hardware Setup
+1.  **Button 1**: Pin 2 <-> GND
+2.  **Button 2**: Pin 3 <-> GND
+3.  **Button 3**: Pin 4 <-> GND
+4.  **Resistors**: None (Internal Pull-up enabled).
+
+### How to Run
+```bash
+cp examples/three_buttons_direct.ino src/main.cpp
 ~/.local/bin/pio run -t upload
 ```
+

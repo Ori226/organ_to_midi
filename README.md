@@ -60,11 +60,10 @@ A basic circuit was implemented to verify the Wokwi environment and simulating i
 2.  **Code Behavior**: 
     *   The sketch (`src/Organ_Main.ino`) blinks Pin 13 (ON for 1s, OFF for 4s).
 3.  **Result**: 
-    *   The sketch (`examples/three_buttons_piso.ino`) reads the buttons via the 74HC165 and sends MIDI notes.
 
 ## PISO Shift Register (74HC165) Implementation
 
-The project now uses a **74HC165** Parallel-In Serial-Out shift register to read the inputs. The current `diagram.json` reflects a simplified development setup with 3 buttons.
+The project now uses a **74HC165** Parallel-In Serial-Out shift register to read the inputs (DIP Switches).
 
 ### SPI Logic
 To achieve high-speed reading, the simulation uses the standard **SPI library**:
