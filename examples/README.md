@@ -41,3 +41,22 @@ cp ../examples/rhythm_sim.ino src/main.cpp
 # 4. Upload
 ~/.local/bin/pio run -t upload
 ```
+
+## `button_piano.ino`
+**Description**: Triggers a single MIDI Note (Middle C / Note 60) when a button is pressed.
+**Purpose**: Tests Digital I/O reading, Debouncing logic, and MIDI Event triggers.
+
+### Hardware Setup
+You need a simple push button.
+1.  **Pin Connection**: Connect one leg of the button to **Digital Pin 2**.
+2.  **Ground Connection**: Connect the other leg of the button to any **GND** pin.
+3.  **No Resistor Needed**: The code enables the internal pull-up resistor.
+
+### How to Run
+Follow the same steps as above, but use `button_piano.ino`:
+
+```bash
+# Verify wiring first!
+cp examples/button_piano.ino src/main.cpp
+~/.local/bin/pio run -t upload
+```
