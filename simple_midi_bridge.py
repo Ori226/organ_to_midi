@@ -3,15 +3,22 @@ import serial
 import mido
 
 # Configuration
-SERIAL_PORT = "/dev/ttyACM0"
 BAUD_RATE = 115200
+CANDIDATE_PORTS = ["/dev/ttyACM0", "/dev/ttyACM1", "/dev/ttyUSB0", "/dev/ttyUSB1"]
 
 def run_bridge():
-    print(f"Opening Serial Port {SERIAL_PORT}...")
-    try:
-        ser = serial.Serial(SERIAL_PORT, BAUD_RATE)
-    except serial.SerialException as e:
-        print(f"Error opening serial port: {e}")
+    ser = None
+    for port in CANDIDATE_PORTS:
+        print(f"Trying Serial Port {port}...")
+        try:
+            ser = serial.Serial(port, BAUD_RATE)
+            print(f"Success! Connected to {port}")
+            break
+        except serial.SerialException:
+            pass
+    
+    if ser is None:
+        print("Error: No suitable serial port found.")
         return
 
     print("Opening Virtual MIDI Output Port...")

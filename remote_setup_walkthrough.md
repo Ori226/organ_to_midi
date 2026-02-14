@@ -95,3 +95,11 @@ done
 aconnect "RtMidiOut Client":0 "FLUID Synth":0 && echo "Connected! Sound should be active." || echo "Failed to connect."
 ```
 
+
+## Troubleshooting & Robustness
+See [Deployment Lessons](file:///home/ori/.gemini/antigravity/brain/8c48ca99-ab0f-49ba-8c43-dc35ad5a86f4/deployment_lessons.md) for details on:
+1.  USB Upload Timeouts.
+2.  Serial Port changes (ACM0 -> ACM1).
+3.  "Silent" Organ (Floating Inputs).
+4.  Persistent ALSA connections.
+

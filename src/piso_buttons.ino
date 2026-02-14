@@ -25,7 +25,7 @@
 
 // MIDI Configuration
 #define MIDI_CHANNEL 0
-#define NOTE_BASE 36 // C2 (Low Bass)
+#define NOTE_BASE 60 // C4
 
 // Debug Mode: Uncomment to see binary output instead of MIDI
 // #define DEBUG_MODE 
@@ -58,24 +58,9 @@ void printBinary(byte data) {
 #endif
 }
 
-void sendProgramChange(byte cmd, byte data) {
-#ifndef DEBUG_MODE
-  Serial.write(cmd);
-  Serial.write(data);
-#else
-  Serial.print("MIDI PC: cmd=0x");
-  Serial.print(cmd, HEX);
-  Serial.print(" data=");
-  Serial.println(data);
-#endif
-}
-
 void setup() {
   Serial.begin(115200);
   
-  // Select Instrument: Church Organ (General MIDI #20 -> 19 zero-indexed)
-  sendProgramChange(0xC0 | MIDI_CHANNEL, 19); 
-
   // Setup Latch Pin
   pinMode(PIN_PL, OUTPUT);
   digitalWrite(PIN_PL, HIGH);
@@ -83,7 +68,7 @@ void setup() {
   // Initialize SPI
   // 74HC165 works well with 1MHz, MSB First, Mode 0 or 2
   SPI.begin();
-  SPI.beginTransaction(SPISettings(100000, MSBFIRST, SPI_MODE0)); 
+  SPI.beginTransaction(SPISettings(1000000, MSBFIRST, SPI_MODE0)); 
 }
 
 void loop() {
@@ -97,12 +82,7 @@ void loop() {
   // Standard SPI.transfer() reads *during* the clock cycles.
   byte currentState = SPI.transfer(0);
   
-  // Print only if changed or every 500ms
-  static unsigned long lastPrint = 0;
-  if (currentState != lastState || millis() - lastPrint > 500) {
-    printBinary(currentState);
-    lastPrint = millis();
-  }
+  printBinary(currentState);
 
   // 3. Compare with Last State
   if (currentState != lastState) {
