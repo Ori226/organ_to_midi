@@ -1,159 +1,103 @@
 {
   "version": 1,
-  "author": "Gemini AI - SPI Updated",
+  "author": "Gemini AI - Pull-up Resistors Added",
   "editor": "wokwi",
   "parts": [
     {
       "type": "wokwi-arduino-uno",
       "id": "uno",
-      "top": -41.14,
-      "left": 32.68,
+      "top": 346.2,
+      "left": 76.2,
       "attrs": {}
     },
     {
       "type": "wokwi-74hc165",
       "id": "sr1",
-      "top": -121.05,
-      "left": 145.07,
+      "top": 219.6,
+      "left": 427.84,
       "attrs": {}
     },
     {
-      "type": "wokwi-slide-switch",
-      "id": "sw8",
-      "top": -201.18,
-      "left": 0,
-      "attrs": {}
+      "type": "wokwi-pushbutton",
+      "id": "btn1",
+      "top": -13,
+      "left": -336,
+      "attrs": {
+        "color": "green"
+      }
     },
     {
-      "type": "wokwi-slide-switch",
-      "id": "sw7",
-      "top": -201.18,
-      "left": 40,
-      "attrs": {}
+      "type": "wokwi-pushbutton",
+      "id": "btn7",
+      "top": -89.8,
+      "left": 259.2,
+      "attrs": {
+        "color": "green"
+      }
     },
     {
-      "type": "wokwi-slide-switch",
-      "id": "sw6",
-      "top": -201.18,
-      "left": 80,
-      "attrs": {}
-    },
-    {
-      "type": "wokwi-slide-switch",
-      "id": "sw5",
-      "top": -201.18,
-      "left": 120,
-      "attrs": {}
-    },
-    {
-      "type": "wokwi-slide-switch",
-      "id": "sw4",
-      "top": -201.18,
-      "left": 160,
-      "attrs": {}
-    },
-    {
-      "type": "wokwi-slide-switch",
-      "id": "sw3",
-      "top": -201.18,
-      "left": 200,
-      "attrs": {}
-    },
-    {
-      "type": "wokwi-slide-switch",
-      "id": "sw2",
-      "top": -201.18,
-      "left": 240,
-      "attrs": {}
-    },
-    {
-      "type": "wokwi-slide-switch",
-      "id": "sw1",
-      "top": -201.18,
-      "left": 280,
-      "attrs": {}
+      "type": "wokwi-pushbutton",
+      "id": "btn8",
+      "top": -89.8,
+      "left": 393.6,
+      "attrs": {
+        "color": "green"
+      }
     }
   ],
   "connections": [
     [
-      "sr1:D7",
-      "sw8:2",
-      "green",
-      [
-        "v24",
-        "h-114"
-      ]
-    ],
-    [
-      "sr1:D6",
-      "sw7:2",
-      "green",
-      [
-        "v18",
-        "h-114"
-      ]
-    ],
-    [
-      "sr1:D5",
-      "sw6:2",
-      "green",
-      [
-        "v12",
-        "h-80"
-      ]
-    ],
-    [
-      "sr1:D4",
-      "sw5:2",
-      "green",
-      [
-        "v8",
-        "h-45"
-      ]
-    ],
-    [
-      "sr1:D3",
-      "sw4:2",
-      "green",
-      [
-        "v-26",
-        "h7"
-      ]
-    ],
-    [
-      "sr1:D2",
-      "sw3:2",
-      "green",
-      [
-        "v-20",
-        "h21"
-      ]
-    ],
-    [
-      "sr1:D1",
-      "sw2:2",
-      "green",
-      [
-        "v-16",
-        "h61"
-      ]
-    ],
-    [
+      "btn1:2.r",
       "sr1:D0",
-      "sw1:2",
       "green",
       [
-        "v-10",
-        "h82"
+        "v163.4",
+        "h518.6"
       ]
+    ],
+    [
+      "btn7:2.r",
+      "sr1:D6",
+      "green",
+      [
+        "v393.8",
+        "h144.2"
+      ]
+    ],
+    [
+      "btn8:2.r",
+      "sr1:D7",
+      "green",
+      [
+        "h192.2",
+        "v355.4",
+        "h-172.8"
+      ]
+    ],
+    [
+      "btn1:1.l",
+      "uno:GND.1",
+      "black",
+      [
+        "h-76.8",
+        "v249.6",
+        "h201.6",
+        "v-6.2"
+      ]
+    ],
+    [
+      "btn8:1.l",
+      "btn7:1.r",
+      "black",
+      []
     ],
     [
       "sr1:PL",
       "uno:10",
       "orange",
       [
-        "v36",
-        "h13"
+        "v28.8",
+        "h-202.3"
       ]
     ],
     [
@@ -161,8 +105,8 @@
       "uno:13",
       "purple",
       [
-        "v30",
-        "h-22"
+        "v38.4",
+        "h-240.4"
       ]
     ],
     [
@@ -170,182 +114,54 @@
       "uno:12",
       "magenta",
       [
-        "v-4",
-        "h0"
-      ]
-    ],
-    [
-      "uno:GND.1",
-      "sw8:1",
-      "black",
-      [
-        "v-16",
-        "h0"
-      ]
-    ],
-    [
-      "sw8:1",
-      "sw7:1",
-      "black",
-      [
-        "v7",
-        "h0"
-      ]
-    ],
-    [
-      "sw7:1",
-      "sw6:1",
-      "black",
-      [
-        "v7",
-        "h0"
-      ]
-    ],
-    [
-      "sw6:1",
-      "sw5:1",
-      "black",
-      [
-        "v7",
-        "h0"
-      ]
-    ],
-    [
-      "sw5:1",
-      "sw4:1",
-      "black",
-      [
-        "v7",
-        "h0"
-      ]
-    ],
-    [
-      "sw4:1",
-      "sw3:1",
-      "black",
-      [
-        "v7",
-        "h0"
-      ]
-    ],
-    [
-      "sw3:1",
-      "sw2:1",
-      "black",
-      [
-        "v7",
-        "h0"
-      ]
-    ],
-    [
-      "sw2:1",
-      "sw1:1",
-      "black",
-      [
-        "v7",
-        "h0"
-      ]
-    ],
-    [
-      "sw1:3",
-      "uno:5V",
-      "red",
-      [
-        "v12",
-        "h21",
-        "v335",
-        "h0"
-      ]
-    ],
-    [
-      "sw1:3",
-      "sw2:3",
-      "red",
-      [
-        "v12",
-        "h0"
-      ]
-    ],
-    [
-      "sw2:3",
-      "sw3:3",
-      "red",
-      [
-        "v12",
-        "h0"
-      ]
-    ],
-    [
-      "sw3:3",
-      "sw4:3",
-      "red",
-      [
-        "v12",
-        "h0"
-      ]
-    ],
-    [
-      "sw4:3",
-      "sw5:3",
-      "red",
-      [
-        "v12",
-        "h0"
-      ]
-    ],
-    [
-      "sw5:3",
-      "sw6:3",
-      "red",
-      [
-        "v12",
-        "h0"
-      ]
-    ],
-    [
-      "sw6:3",
-      "sw7:3",
-      "red",
-      [
-        "v12",
-        "h0"
-      ]
-    ],
-    [
-      "sw7:3",
-      "sw8:3",
-      "red",
-      [
-        "v12",
-        "h0"
+        "v-27.6",
+        "h-288.5"
       ]
     ],
     [
       "sr1:VCC",
-      "sw5:3",
+      "uno:5V",
       "red",
       [
-        "v-34",
-        "h165"
-      ]
-    ],
-    [
-      "sr1:CE",
-      "sw4:1",
-      "black",
-      [
-        "v-39",
-        "h158"
+        "v-8.4",
+        "h-195.8"
       ]
     ],
     [
       "sr1:GND",
-      "uno:GND.1",
+      "uno:GND.2",
       "black",
       [
-        "v42",
-        "h-233"
+        "v57.6",
+        "h-253.5"
+      ]
+    ],
+    [
+      "sr1:CE",
+      "uno:GND.2",
+      "black",
+      [
+        "v-18",
+        "h-195.9"
+      ]
+    ],
+    [
+      "btn1:1.r",
+      "btn7:1.l",
+      "black",
+      [
+        "v0"
+      ]
+    ],
+    [
+      "sr1:DS",
+      "uno:GND.2",
+      "black",
+      [
+        "h230.4",
+        "v318.1"
       ]
     ]
-  ]
+  ],
+  "dependencies": {}
 }
