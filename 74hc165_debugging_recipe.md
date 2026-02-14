@@ -6,6 +6,8 @@ This guide provides a step-by-step approach to debugging the 74HC165 Parallel-In
 
 Before writing code, ensure the wiring is logically sound.
 
+![74HC165 Pinout](74hc165_pinout.png)
+
 ### 1. Power & Ground
 - [ ] **VCC** (Pin 16) -> 5V (use the red common rail on your breadboard).
 - [ ] **GND** (Pin 8 of 74HC165) -> Arduino GND (or the common ground rail on your breadboard).
