@@ -135,3 +135,9 @@ The `mock_organ.py` script uses the `mido` library to talk to the Linux sound sy
 ## Examples
 See the [examples/](examples/) directory for isolated test sketches.
 *   [Rhythm Simulation (rhythm_sim.ino)](examples/README.md): Plays a MIDI pattern to verify the audio pipeline.
+
+## Phase One: Current State
+
+The following image illustrates the current wiring state of the project (Phase One), featuring the Arduino Uno, 74HC165 Shift Register, and 3 push buttons on the breadboard.
+
+![Phase One Wiring](phase_one_wiring.jpg)
