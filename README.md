@@ -141,3 +141,6 @@ See the [examples/](examples/) directory for isolated test sketches.
 The following image illustrates the current wiring state of the project (Phase One), featuring the Arduino Uno, 74HC165 Shift Register, and 3 push buttons on the breadboard.
 
 ![Phase One Wiring](phase_one_wiring.jpg)
+
+### Wiring Illustration
+![Phase One Illustration](phase_one_illustration.png)
