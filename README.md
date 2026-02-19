@@ -7,6 +7,7 @@ This project aims to retrofit a vintage analog organ (2 Manuals + Pedals) into a
 *   **Controller**: Arduino Mega 2560 or Teensy 4.1 (Simulation: Arduino Uno)
 *   **Method**: Keyboard Matrix Scanning
 *   **Outputs**: USB MIDI
+*   **Display**: 20x4 LCD (I2C Address 0x27)
 
 ## MIDI Channels
 *   **Upper Manual**: Channel 1
@@ -72,7 +73,12 @@ To achieve high-speed reading, the simulation uses the standard **SPI library**:
     *   **LATCH** (PL) -> Pin 10
     *   **CLOCK** (CP) -> Pin 13 (SCK)
     *   **DATA** (Q7) -> Pin 12 (MISO)
-*   **The "D7" Quirk**: The 74HC165 outputs the last bit (D7) immediately upon latching. Since SPI reads *during* cloud pulses, we manually read Pin 12 (MISO) *before* starting the SPI transfer to capture D7, then combine it with the shifted byte.
+*   **Logic Type**: **Active High** (Input Pin -> Ground via pulldown, or Switch to VCC). 
+    *   *Note*: The current implementation reads `1` when a button is pressed and `0` when released.
+*   **Bit Mapping**:
+    *   Button 0 -> Bit 0
+    *   Button 1 -> Bit 6
+    *   Button 2 -> Bit 7
 
 ## MIDI Integration
 
@@ -80,6 +86,22 @@ The simulation outputs standard MIDI data via the Serial port.
 *   **Mapping**: Switches D0-D7 -> MIDI Notes 60-67 (C4-G4).
 *   **Velocity**: Fixed at 127.
 *   **Protocol**: Standard Serial MIDI (31250 baud) via `MIDI.h`.
+
+## LCD Status Display (I2C)
+
+The system includes a 20x4 LCD display to provide real-time feedback on the organ's status.
+*   **Library**: `LiquidCrystal_I2C`
+*   **Connection**:
+    *   **SDA** -> Arduino A4
+    *   **SCL** -> Arduino A5
+*   **I2C Address**: `0x27`
+
+### Display Layout
+*   **Row 0**: Static "Organ System" title.
+*   **Rows 1-3**: Real-time ON/OFF status for buttons 0, 6, and 7.
+    *   `0 - ON` / `0 - OFF`
+    *   `6 - ON` / `6 - OFF`
+    *   `7 - ON` / `7 - OFF`
 
 ### Connecting Simulation to Host MIDI (Yoshimi/DAW)
 
