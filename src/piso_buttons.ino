@@ -71,17 +71,17 @@ void updateLcdStatus(byte state) {
   // Line 1: Button 0
   lcd.setCursor(0, 1);
   lcd.print("0 - ");
-  lcd.print((state & 1) ? "OFF" : "ON "); // Active Low: 1=OFF, 0=ON
+  lcd.print((state & (1 << 0)) ? "ON " : "OFF"); // Active High: 1=ON, 0=OFF
   
   // Line 2: Button 6
   lcd.setCursor(0, 2);
   lcd.print("6 - ");
-  lcd.print((state & (1 << 6)) ? "OFF" : "ON ");
+  lcd.print((state & (1 << 6)) ? "ON " : "OFF");
   
   // Line 3: Button 7
   lcd.setCursor(0, 3);
   lcd.print("7 - ");
-  lcd.print((state & (1 << 7)) ? "OFF" : "ON ");
+  lcd.print((state & (1 << 7)) ? "ON " : "OFF");
 }
 
 void setup() {
@@ -103,7 +103,7 @@ void setup() {
   lcd.print("Organ System");
   
   // Initialize button display states
-  updateLcdStatus(0xFF); // Start with all OFF (pull-ups high)
+  updateLcdStatus(0x00); // Start with all OFF (0 in Active High)
 }
 
 void loop() {
@@ -122,21 +122,21 @@ void loop() {
   // 3. Compare with Last State
   if (currentState != lastState) {
     
-    // Check D0 (Button 1)
-    if ((currentState & 1) != (lastState & 1)) {
-       bool pressed = !(currentState & 1); // Active Low
+    // Check D0
+    if ((currentState & (1 << 0)) != (lastState & (1 << 0))) {
+       bool pressed = (currentState & (1 << 0)); // Active High
        sendMidi(pressed ? 0x90 : 0x80, NOTE_BASE, 127);
     }
 
-    // Check D6 (Button 2 in new diagram)
+    // Check D6
     if (((currentState >> 6) & 1) != ((lastState >> 6) & 1)) {
-       bool pressed = !((currentState >> 6) & 1); // Active Low
+       bool pressed = ((currentState >> 6) & 1); // Active High
        sendMidi(pressed ? 0x90 : 0x80, NOTE_BASE + 2, 127); // E4
     }
 
-    // Check D7 (Button 3)
+    // Check D7
     if (((currentState >> 7) & 1) != ((lastState >> 7) & 1)) {
-       bool pressed = !((currentState >> 7) & 1); // Active Low
+       bool pressed = ((currentState >> 7) & 1); // Active High
        sendMidi(pressed ? 0x90 : 0x80, NOTE_BASE + 4, 127); // G4
     }
     
