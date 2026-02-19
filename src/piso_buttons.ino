@@ -1,5 +1,8 @@
 #include <Arduino.h>
 #include <SPI.h>
+#include <Wire.h>
+#include <Wire.h>
+#include <LiquidCrystal_I2C.h>
 
 /**
  * PISO Button Example (74HC165)
@@ -18,6 +21,12 @@
  * - Button 2 -> D1 (Bit 1)
  * - Button 3 -> D7 (Bit 7)
  */
+
+const int SCREEN_WIDTH = 128; // OLED display width, in pixels
+const int SCREEN_HEIGHT = 64; // OLED display height, in pixels
+
+// Set the LCD address to 0x27 for a 20 chars and 4 line display
+LiquidCrystal_I2C lcd(0x27, 20, 4);
 
 // Pin Definitions
 #define PIN_PL 10   // Parallel Load (Latch) -> Pin 1 of 74HC165
@@ -58,6 +67,13 @@ void printBinary(byte data) {
 #endif
 }
 
+void displayPressed(int index) {
+  lcd.setCursor(0, 2);
+  lcd.print("Button Pressed: ");
+  lcd.print(index);
+  lcd.print("   "); // Clear trailing characters
+}
+
 void setup() {
   Serial.begin(115200);
   
@@ -69,6 +85,14 @@ void setup() {
   // 74HC165 works well with 1MHz, MSB First, Mode 0 or 2
   SPI.begin();
   SPI.beginTransaction(SPISettings(1000000, MSBFIRST, SPI_MODE0)); 
+
+  // Initialize LCD
+  lcd.init();
+  lcd.backlight();
+  lcd.setCursor(3, 0);
+  lcd.print("Organ System");
+  lcd.setCursor(2, 1);
+  lcd.print("Status: Active");
 }
 
 void loop() {
@@ -91,18 +115,21 @@ void loop() {
     if ((currentState & 1) != (lastState & 1)) {
        bool pressed = !(currentState & 1); // Active Low
        sendMidi(pressed ? 0x90 : 0x80, NOTE_BASE, 127);
+       if (pressed) displayPressed(0);
     }
 
     // Check D6 (Button 2 in new diagram)
     if (((currentState >> 6) & 1) != ((lastState >> 6) & 1)) {
        bool pressed = !((currentState >> 6) & 1); // Active Low
        sendMidi(pressed ? 0x90 : 0x80, NOTE_BASE + 2, 127); // E4
+       if (pressed) displayPressed(6);
     }
 
     // Check D7 (Button 3)
     if (((currentState >> 7) & 1) != ((lastState >> 7) & 1)) {
        bool pressed = !((currentState >> 7) & 1); // Active Low
        sendMidi(pressed ? 0x90 : 0x80, NOTE_BASE + 4, 127); // G4
+       if (pressed) displayPressed(7);
     }
     
     lastState = currentState;
