@@ -186,7 +186,7 @@ The vintage console has been prepared with a centralized 15-pin breakout system 
 ![Console Internals](assets/console_internals.jpg)
 
 **DB15 Breakout Board:**
-![DB15 Breakout](assets/db15_breakout.jpg)
+![DB15 Breakout](assets/db15_breakout.png)
 
 ---
 *This documentation is part of an ongoing project to build a custom MIDI organ controller.*

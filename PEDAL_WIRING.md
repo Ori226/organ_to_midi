@@ -34,7 +34,7 @@ The original analog connections have been replaced with a centralized 15-pin bre
 ### DB15 Breakout Board
 This 15-pin screw terminal board serves as the main junction point.
 
-![Breakout Board](assets/db15_breakout.jpg)
+![Breakout Board](assets/db15_breakout.png)
 
 ## 3. The Mapping Reference
 The following scribble was used as the source for this digital mapping:
