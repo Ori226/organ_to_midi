@@ -183,10 +183,10 @@ Current phase: Expanding the system to handle the full 13-note pedalboard using 
 The vintage console has been prepared with a centralized 15-pin breakout system to interface with the new digital electronics.
 
 **Console Internals:**
-![Console Internals](file:///home/ori/.gemini/antigravity/brain/3698dc20-111b-4431-b2a5-b4d7b3d2c649/uploaded_media_2_1771746426115.jpg)
+![Console Internals](assets/console_internals.jpg)
 
 **DB15 Breakout Board:**
-![DB15 Breakout](file:///home/ori/.gemini/antigravity/brain/3698dc20-111b-4431-b2a5-b4d7b3d2c649/uploaded_media_1_1771746426115.jpg)
+![DB15 Breakout](assets/db15_breakout.jpg)
 
 ---
 *This documentation is part of an ongoing project to build a custom MIDI organ controller.*

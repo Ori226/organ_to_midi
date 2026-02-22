@@ -29,17 +29,17 @@ Based on the [handwritten scribble](file:///home/ori/.gemini/antigravity/brain/3
 ### Pedal Console Internal
 The original analog connections have been replaced with a centralized 15-pin breakout to simplify the interface with the Arduino shift registers.
 
-![Console Internals](file:///home/ori/.gemini/antigravity/brain/3698dc20-111b-4431-b2a5-b4d7b3d2c649/uploaded_media_2_1771746426115.jpg)
+![Console Internals](assets/console_internals.jpg)
 
 ### DB15 Breakout Board
 This 15-pin screw terminal board serves as the main junction point.
 
-![Breakout Board](file:///home/ori/.gemini/antigravity/brain/3698dc20-111b-4431-b2a5-b4d7b3d2c649/uploaded_media_1_1771746426115.jpg)
+![Breakout Board](assets/db15_breakout.jpg)
 
 ## 3. The Mapping Reference
 The following scribble was used as the source for this digital mapping:
 
-![Handwritten Mapping](file:///home/ori/.gemini/antigravity/brain/3698dc20-111b-4431-b2a5-b4d7b3d2c649/uploaded_media_0_1771746426115.jpg)
+![Handwritten Mapping](assets/pedal_mapping_scribble.jpg)
 
 ---
 *Next Step: Connecting these 13 terminals to the 74HC165 shift register inputs in the same order.*
