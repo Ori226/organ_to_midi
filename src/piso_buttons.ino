@@ -8,14 +8,14 @@
  * 
  * Hardware:
  * - 2x 74HC165 Shift Registers (Daisy Chained)
- * 
- * Pin Connections:
- * - LATCH (PL) -> Pin 10
- * - CLOCK (CP) -> Pin 13 (SCK)
- * - DATA (Q7)  -> Pin 12 (MISO)
  */
 
-// --- 1. State Configuration ---
+// --- 1. Display Configuration ---
+// Uncomment the mode you want to use:
+#define DISPLAY_MODE_KEYBOARD  // Visual ASCII keyboard
+// #define DISPLAY_MODE_BINARY    // Raw bit status (C0: 0000 0000)
+
+// --- 2. State Configuration ---
 const int NUM_CHIPS = 2; 
 byte lastChipStates[NUM_CHIPS] = {0};
 
@@ -23,32 +23,20 @@ byte lastChipStates[NUM_CHIPS] = {0};
 LiquidCrystal_I2C lcd(0x27, 20, 4);
 
 // Pin Definitions
-#define PIN_PL 10   // Parallel Load (Latch) -> Pin 1 of 74HC165
+#define PIN_PL 10   // Parallel Load (Latch)
 
 // MIDI Configuration
 #define MIDI_CHANNEL 0
 #define NOTE_BASE 60 // C4
 
-// Debug Mode: Uncomment to see binary output instead of MIDI
-// #define DEBUG_MODE 
-
 void sendMidi(byte cmd, byte data1, byte data2) {
-#ifndef DEBUG_MODE
   Serial.write(cmd);
   Serial.write(data1);
   Serial.write(data2);
-#else
-  Serial.print("MIDI: cmd=0x");
-  Serial.print(cmd, HEX);
-  Serial.print(" d1=");
-  Serial.print(data1);
-  Serial.print(" d2=");
-  Serial.println(data2);
-#endif
 }
 
-void updateLcdStatus(int chip, byte state) {
-  // Line 1 for Chip 0, Line 2 for Chip 1
+// Mode: Binary Bit Status
+void updateLcdStatus_Binary(int chip, byte state) {
   lcd.setCursor(0, chip + 1);
   lcd.print("C");
   lcd.print(chip);
@@ -57,69 +45,100 @@ void updateLcdStatus(int chip, byte state) {
   for (int i = 0; i < 8; i++) {
     bool val = (state >> i) & 1;
     lcd.print(val ? "1" : "0");
-    if (i == 3) lcd.print(" "); // Add a small space for readability
+    if (i == 3) lcd.print(" ");
   }
+}
+
+// Mode: Keyboard Visualization (13 bits)
+void updateLcdStatus_Keyboard(uint16_t state) {
+  // Row 1: Black Keys
+  lcd.setCursor(3, 1);
+  lcd.print(" ");
+  lcd.print((state & (1 << 1))  ? "\xFF" : "#"); // C#
+  lcd.print(" ");
+  lcd.print((state & (1 << 3))  ? "\xFF" : "#"); // D#
+  lcd.print("  "); // E-F Gap
+  lcd.print((state & (1 << 6))  ? "\xFF" : "#"); // F#
+  lcd.print(" ");
+  lcd.print((state & (1 << 8))  ? "\xFF" : "#"); // G#
+  lcd.print(" ");
+  lcd.print((state & (1 << 10)) ? "\xFF" : "#"); // A#
+  lcd.print("   ");
+
+  // Row 2: White Keys
+  lcd.setCursor(3, 2);
+  lcd.print((state & (1 << 0))  ? "\xFF" : "|"); // C
+  lcd.print(" ");
+  lcd.print((state & (1 << 2))  ? "\xFF" : "|"); // D
+  lcd.print(" ");
+  lcd.print((state & (1 << 4))  ? "\xFF" : "|"); // E
+  lcd.print((state & (1 << 5))  ? "\xFF" : "|"); // F
+  lcd.print(" ");
+  lcd.print((state & (1 << 7))  ? "\xFF" : "|"); // G
+  lcd.print(" ");
+  lcd.print((state & (1 << 9))  ? "\xFF" : "|"); // A
+  lcd.print(" ");
+  lcd.print((state & (1 << 11)) ? "\xFF" : "|"); // B
+  lcd.print((state & (1 << 12)) ? "\xFF" : "|"); // C (high)
 }
 
 void setup() {
   Serial.begin(115200);
-  
-  // Setup Latch Pin
   pinMode(PIN_PL, OUTPUT);
   digitalWrite(PIN_PL, HIGH);
   
-  // Initialize SPI
   SPI.begin();
   SPI.beginTransaction(SPISettings(1000000, MSBFIRST, SPI_MODE0)); 
 
-  // Initialize LCD
   lcd.init();
   lcd.backlight();
-  lcd.setCursor(3, 0);
-  lcd.print("Organ System");
+  lcd.setCursor(2, 0);
   
-  // Initialize button display states for both chips
-  updateLcdStatus(0, 0x00);
-  updateLcdStatus(1, 0x00);
+#ifdef DISPLAY_MODE_KEYBOARD
+  lcd.print("Pedalboard C2-C3");
+  updateLcdStatus_Keyboard(0);
+#else
+  lcd.print("Shift Reg Status");
+  updateLcdStatus_Binary(0, 0x00);
+  updateLcdStatus_Binary(1, 0x00);
+#endif
 }
 
 void loop() {
-  // 1. Latch Data (Pulse Low)
   digitalWrite(PIN_PL, LOW);
   delayMicroseconds(5);
   digitalWrite(PIN_PL, HIGH);
   
-  // 2. Read all chips in the chain
+  uint16_t combinedState = 0;
+  bool changed = false;
+
   for (int chip = 0; chip < NUM_CHIPS; chip++) {
-    // Read the current chip via SPI
     byte currentState = SPI.transfer(0);
     byte previousState = lastChipStates[chip];
+    combinedState |= ((uint16_t)currentState << (chip * 8));
 
-    // 3. If something changed on this specific chip
     if (currentState != previousState) {
-      
-      // Iterate through all 8 bits of this chip
+      changed = true;
       for (int i = 0; i < 8; i++) {
-        bool currentBit = (currentState >> i) & 1;
-        bool previousBit = (previousState >> i) & 1;
-
-        // If this specific bit changed
-        if (currentBit != previousBit) {
-          // Calculate MIDI Note: Base (60) + (Chip Index * 8) + Bit Index
+        if (((currentState >> i) & 1) != ((previousState >> i) & 1)) {
           int note = NOTE_BASE + (chip * 8) + i;
-          
-          // Send Note On (0x90) if pressed, Note Off (0x80) if released
-          sendMidi(currentBit ? 0x90 : 0x80, note, 127);
+          bool pressed = (currentState >> i) & 1;
+          sendMidi(pressed ? 0x90 : 0x80, note, 127);
         }
       }
       
-      // Update LCD for this specific chip
-      updateLcdStatus(chip, currentState); 
-      
-      // Save state for next comparison
+#ifdef DISPLAY_MODE_BINARY
+      updateLcdStatus_Binary(chip, currentState);
+#endif
       lastChipStates[chip] = currentState;
     }
   }
+
+#ifdef DISPLAY_MODE_KEYBOARD
+  if (changed) {
+    updateLcdStatus_Keyboard(combinedState);
+  }
+#endif
   
-  delay(5); // Reduced delay for better "Feel" (Latency)
+  delay(5); 
 }
