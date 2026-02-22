@@ -22,44 +22,37 @@ def run_bridge():
         return
 
     print("Opening Virtual MIDI Output Port...")
-    # Open virtual port (visible to ALSA)
     try:
         with mido.open_output("Arduino Bridge", virtual=True) as outport:
-            print("Bridge Running! Connect this port to FluidSynth using aconnect.")
+            print("Bridge Running!")
             
-            # Give FluidSynth a moment to stabilize
-            time.sleep(1)
-            
-            # Set sound to Choir Aahs (GM Program Change 52)
-            print("Setting sound to Choir Aahs (Program 52)...")
-            outport.send(mido.Message('program_change', program=52))
-            
-            # Send it again just in case (sometimes virtual ports drop first msg)
-            time.sleep(0.5)
-            outport.send(mido.Message('program_change', program=52))
-            
-            print("Listening for serial data...")
-            
-            # Use mido Parser to handle running status and incomplete bytes
+            # Use mido Parser
             parser = mido.Parser()
-            choir_set = False
+            prog_set = False
+            
+            # Helper to set bank and program
+            def set_patch(bank, program):
+                print(f"Setting Bank {bank}, Program {program}...")
+                # Bank Select MSB (CC 0)
+                outport.send(mido.Message('control_change', control=0, value=bank))
+                # Bank Select LSB (CC 32)
+                outport.send(mido.Message('control_change', control=32, value=0))
+                # Program Change
+                outport.send(mido.Message('program_change', program=program))
+
+            # Initial setup for Theremin (Bank 1, Program 1)
+            set_patch(1, 1)
             
             while True:
                 if ser.in_waiting:
-                    # Read byte-by-byte or chunks
                     chunk = ser.read(ser.in_waiting)
                     for byte in chunk:
-                        # Feed the parser
                         parser.feed_byte(byte)
-                        
-                        # Process available messages
                         for msg in parser:
-                            if not choir_set:
-                                print("Initial activity detected. Switching to Choir Aahs (Program 52)...")
-                                outport.send(mido.Message('program_change', program=52))
-                                choir_set = True
-                                
-                            print(f"Sending MIDI: {msg}")
+                            if not prog_set:
+                                # Ensure patch is set on first activity
+                                set_patch(1, 1)
+                                prog_set = True
                             outport.send(msg)
                 else:
                     time.sleep(0.001)
@@ -67,7 +60,7 @@ def run_bridge():
     except KeyboardInterrupt:
         print("\nStopping bridge...")
     finally:
-        if 'ser' in locals() and ser.is_open:
+        if 'ser' in locals() and ser is not None and ser.is_open:
             ser.close()
 
 if __name__ == "__main__":
