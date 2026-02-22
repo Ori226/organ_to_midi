@@ -24,51 +24,72 @@ Based on the [handwritten scribble](file:///home/ori/.gemini/antigravity/brain/3
 | **-** | 14 | *Available* |
 | **-** | 15 | *Available* |
 
-| Note | DB15 Pin | Shift Register | Input Pin | MIDI Note |
-| :--- | :--- | :--- | :--- | :--- |
-| **C** | 1 | Chip 1 | D0 | 60 |
-| **C#** | 2 | Chip 1 | D1 | 61 |
-| **D** | 3 | Chip 1 | D2 | 62 |
-| **D#** | 4 | Chip 1 | D3 | 63 |
-| **E** | 5 | Chip 1 | D4 | 64 |
-| **F** | 6 | Chip 1 | D5 | 65 |
-| **F#** | 7 | Chip 1 | D6 | 66 |
-| **G** | 8 | Chip 1 | D7 | 67 |
-| **G#** | 9 | Chip 2 | D0 | 68 |
-| **A** | 10 | Chip 2 | D1 | 69 |
-| **A#** | 11 | Chip 2 | D2 | 70 |
-| **B** | 12 | Chip 2 | D3 | 71 |
-| **C (High)** | 13 | Chip 2 | D4 | 72 |
+| Note | DB15 Pin | Shift Register | Input Index | **IC Pin** | MIDI Note |
+| :--- | :--- | :--- | :--- | :--- | :--- |
+| **C** | 1 | Chip 1 | D0 | **11** | 60 |
+| **C#** | 2 | Chip 1 | D1 | **12** | 61 |
+| **D** | 3 | Chip 1 | D2 | **13** | 62 |
+| **D#** | 4 | Chip 1 | D3 | **14** | 63 |
+| **E** | 5 | Chip 1 | D4 | **3** | 64 |
+| **F** | 6 | Chip 1 | D5 | **4** | 65 |
+| **F#** | 7 | Chip 1 | D6 | **5** | 66 |
+| **G** | 8 | Chip 1 | D7 | **6** | 67 |
+| **G#** | 9 | Chip 2 | D0 | **11** | 68 |
+| **A** | 10 | Chip 2 | D1 | **12** | 69 |
+| **A#** | 11 | Chip 2 | D2 | **13** | 70 |
+| **B** | 12 | Chip 2 | D3 | **14** | 71 |
+| **C (High)** | 13 | Chip 2 | D4 | **3** | 72 |
 
-## 2. Wiring Diagram
+## 2. 74HC165 Pinout Reference
+
+Use this diagram to find the physical pins on your 74HC165 chips.
+
+![74HC165 Pinout](assets/74hc165_pinout.png)
+
+## 2. Wiring Diagram & Physical Order
+
+In a daisy chain, the data flows through the chips to the Arduino. To match the code logic:
+
+*   **Chip 1**: The chip **directly connected to the Arduino** (MISO pin).
+*   **Chip 2**: Connected to the **Serial Input (SER)** of Chip 1.
 
 ```mermaid
 graph LR
-    subgraph "Pedalboard Connectors"
+    subgraph "Pedal Mapping"
         P1[Pin 1: C]
-        P2[Pin 2: C#]
         P8[Pin 8: G]
         P9[Pin 9: G#]
         P13[Pin 13: C]
     end
 
-    subgraph "74HC165 (Chip 1)"
+    subgraph "PISO Chip 1 (MISO Connection)"
         C1D0[D0]
-        C1D1[D1]
         C1D7[D7]
+        C1OUT[Q7 Out]
     end
 
-    subgraph "74HC165 (Chip 2)"
+    subgraph "PISO Chip 2 (Daisy-Chained)"
         C2D0[D0]
         C2D4[D4]
+        C2OUT[Q7 Out]
     end
 
-    P1 --> C1D0
-    P2 --> C1D1
-    P8 --> C1D7
-    P9 --> C2D0
-    P13 --> C2D4
+    subgraph "Arduino"
+        MISO[MISO - Pin 12]
+    end
+
+    P1 -.-> C1D0
+    P8 -.-> C1D7
+    C1OUT --> MISO
+
+    P9 -.-> C2D0
+    P13 -.-> C2D4
+    C2OUT -->|SER / Pin 10| C1OUT
+    %% Note: Specific SER pin connection varies by chip, usually Pin 10 on 74HC165
 ```
+
+> [!IMPORTANT]
+> **Chip 1** must be the one that talks to the Arduino directly. If you swap them, the notes will be shifted (Chip 2 will become the lower notes).
 
 ## 3. Hardware Progress
 
