@@ -165,14 +165,10 @@ The system is configured to play a high-quality choir sound by default.
 - **Patch**: Program 52 (Choir Aahs).
 - **Automation**: The `simple_midi_bridge.py` automatically switches to the choir sound upon the first note press to ensure the MIDI command is registered by FluidSynth.
 
-## Hardware Lessons Learned (Pro-Tips)
-Keep a log of common mistakes to avoid repeating them.
-
-- **Floating Inputs**: See the [Debugging Recipe](74hc165_debugging_recipe.md) for how to correctly use resistors with the 74HC165.
-- **Daisy Chaining**: Always ensure the `SER` pin of the first chip connects to the `QH` pin of the second.
-
-## Implementation Pitfalls
-For a detailed log of software, MIDI, and hardware issues encountered, see [ELECTRONICS_PITFALLS.md](ELECTRONICS_PITFALLS.md).
+## Hardware & Wiring Docs
+- **Pedalboard Mapping**: [PEDAL_WIRING.md](PEDAL_WIRING.md) (15-pin connector logic).
+- **Debugging Recipe**: [74hc165_debugging_recipe.md](74hc165_debugging_recipe.md).
+- **Pitfalls Log**: [ELECTRONICS_PITFALLS.md](ELECTRONICS_PITFALLS.md).
 
 ---
 *This documentation is part of an ongoing project to build a custom MIDI organ controller.*
