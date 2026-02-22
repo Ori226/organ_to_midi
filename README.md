@@ -158,6 +158,15 @@ The `mock_organ.py` script uses the `mido` library to talk to the Linux sound sy
 See the [examples/](examples/) directory for isolated test sketches.
 *   [Rhythm Simulation (rhythm_sim.ino)](examples/README.md): Plays a MIDI pattern to verify the audio pipeline.
 
+## Hardware Lessons Learned (Pro-Tips)
+
+### Avoid "Floating" Inputs
+A common mistake during assembly is connecting a pull-down resistor to the data input but **forgetting to connect the other side to Ground**. 
+*   **Result**: The pin acts as an antenna, picking up noise and causing "ghost" button presses.
+*   **Fix**: Always ensure your resistor bridges the Data Pin to either GND (Pull-down) or VCC (Pull-up).
+
+For a detailed walkthrough on diagnosing this and other issues, see the [74HC165 Debugging Recipe](74hc165_debugging_recipe.md).
+
 ## Phase One: Current State
 
 The following image illustrates the current wiring state of the project (Phase One), featuring the Arduino Uno, 74HC165 Shift Register, and 3 push buttons on the breadboard.
@@ -166,3 +175,4 @@ The following image illustrates the current wiring state of the project (Phase O
 
 ### Wiring Illustration
 ![Phase One Illustration](phase_one_illustration.png)
+

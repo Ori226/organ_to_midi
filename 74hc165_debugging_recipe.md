@@ -104,6 +104,33 @@ This means the **shift register is NOT seeing Ground (0V)** when you press the b
     -   **YES**: Your button is broken or wired wrong.
     -   **NO**: Your Blue Rail is not connected to Ground (or the chip is bad).
 
-## Phase 4: Wokwi Specifics
--   Ensure `diagram.json` has `rotate` set correctly if orientation is confusing.
--   Verify `attrs` in `diagram.json` correspond to physically connected pins if using custom parts.
+## Phase 4: Common Pitfalls ("The Ghost in the Machine")
+
+### 1. The Floating Input (The #1 Mistake)
+**The Mistake:** Connecting a resistor to the Data Pin but **forgetting to connect the other end to Ground (or VCC)**.
+
+**What happens:** 
+- The Pin is not "0" and not "1". It is **Floating**.
+- It acts like an antenna, picking up electrical noise from your hands, the power supply, or even the air.
+- The shift register reads random 0s and 1s, making your buttons "phantom press" or stop working entirely.
+
+**The Fix:**
+A resistor MUST be a bridge between two things. 
+- In a **Pull-Down** setup (like this project): 
+  - One end to **Data Pin**.
+  - Other end to **GND (Blue Rail)**.
+
+```mermaid
+graph LR
+    A[Data Pin] --- R[Resistor]
+    R --- B[GND / Blue Rail]
+    A --- S[Switch/Button]
+    S --- C[VCC / Red Rail]
+```
+
+### 2. The Logic Flip
+If you use **Pull-Up** resistors (common in many Arduino tutorials), your code will read `1` when NOT pressed and `0` when pressed. Always verify your code logic matches your physical wiring.
+
+## Phase 5: Wokwi Specifics
+- Ensure `diagram.json` has `rotate` set correctly if orientation is confusing.
+- Verify `attrs` in `diagram.json` correspond to physically connected pins if using custom parts.
