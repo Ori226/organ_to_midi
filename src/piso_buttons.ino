@@ -1,36 +1,29 @@
 #include <Arduino.h>
 #include <SPI.h>
 #include <Wire.h>
-#include <Wire.h>
 #include <LiquidCrystal_I2C.h>
 
 /**
- * PISO Button Example (74HC165)
+ * PISO Button Example (74HC165) - Daisy Chained
  * 
  * Hardware:
- * - 74HC165 Shift Register
- * - 3 Push Buttons connected to inputs D0, D1, D7
+ * - 2x 74HC165 Shift Registers (Daisy Chained)
  * 
- * Pin Connections (as per diagram.json):
+ * Pin Connections:
  * - LATCH (PL) -> Pin 10
  * - CLOCK (CP) -> Pin 13 (SCK)
  * - DATA (Q7)  -> Pin 12 (MISO)
- * 
- * Button Mapping:
- * - Button 1 -> D0 (Bit 0)
- * - Button 2 -> D1 (Bit 1)
- * - Button 3 -> D7 (Bit 7)
  */
 
-const int SCREEN_WIDTH = 128; // OLED display width, in pixels
-const int SCREEN_HEIGHT = 64; // OLED display height, in pixels
+// --- 1. State Configuration ---
+const int NUM_CHIPS = 2; 
+byte lastChipStates[NUM_CHIPS] = {0};
 
 // Set the LCD address to 0x27 for a 20 chars and 4 line display
 LiquidCrystal_I2C lcd(0x27, 20, 4);
 
 // Pin Definitions
 #define PIN_PL 10   // Parallel Load (Latch) -> Pin 1 of 74HC165
-// SCK (Pin 13) and MISO (Pin 12) are defined by SPI library
 
 // MIDI Configuration
 #define MIDI_CHANNEL 0
@@ -38,9 +31,6 @@ LiquidCrystal_I2C lcd(0x27, 20, 4);
 
 // Debug Mode: Uncomment to see binary output instead of MIDI
 // #define DEBUG_MODE 
-
-// State
-byte lastState = 0;
 
 void sendMidi(byte cmd, byte data1, byte data2) {
 #ifndef DEBUG_MODE
@@ -57,31 +47,18 @@ void sendMidi(byte cmd, byte data1, byte data2) {
 #endif
 }
 
-void printBinary(byte data) {
-#ifdef DEBUG_MODE
-  Serial.print("Shift Reg State: ");
-  for (int i = 7; i >= 0; i--) {
-    Serial.print((data >> i) & 1);
+void updateLcdStatus(int chip, byte state) {
+  // Line 1 for Chip 0, Line 2 for Chip 1
+  lcd.setCursor(0, chip + 1);
+  lcd.print("C");
+  lcd.print(chip);
+  lcd.print(": ");
+  
+  for (int i = 0; i < 8; i++) {
+    bool val = (state >> i) & 1;
+    lcd.print(val ? "1" : "0");
+    if (i == 3) lcd.print(" "); // Add a small space for readability
   }
-  Serial.println();
-#endif
-}
-
-void updateLcdStatus(byte state) {
-  // Line 1: Button 0
-  lcd.setCursor(0, 1);
-  lcd.print("0 - ");
-  lcd.print((state & (1 << 0)) ? "ON " : "OFF"); // Active High: 1=ON, 0=OFF
-  
-  // Line 2: Button 6
-  lcd.setCursor(0, 2);
-  lcd.print("6 - ");
-  lcd.print((state & (1 << 6)) ? "ON " : "OFF");
-  
-  // Line 3: Button 7
-  lcd.setCursor(0, 3);
-  lcd.print("7 - ");
-  lcd.print((state & (1 << 7)) ? "ON " : "OFF");
 }
 
 void setup() {
@@ -92,7 +69,6 @@ void setup() {
   digitalWrite(PIN_PL, HIGH);
   
   // Initialize SPI
-  // 74HC165 works well with 1MHz, MSB First, Mode 0 or 2
   SPI.begin();
   SPI.beginTransaction(SPISettings(1000000, MSBFIRST, SPI_MODE0)); 
 
@@ -102,8 +78,9 @@ void setup() {
   lcd.setCursor(3, 0);
   lcd.print("Organ System");
   
-  // Initialize button display states
-  updateLcdStatus(0x00); // Start with all OFF (0 in Active High)
+  // Initialize button display states for both chips
+  updateLcdStatus(0, 0x00);
+  updateLcdStatus(1, 0x00);
 }
 
 void loop() {
@@ -112,37 +89,37 @@ void loop() {
   delayMicroseconds(5);
   digitalWrite(PIN_PL, HIGH);
   
-  // 2. Read Byte via SPI
-  // Note: The 74HC165 puts the first bit (D7 or D0 depending on wiring) on Q7 immediately.
-  // Standard SPI.transfer() reads *during* the clock cycles.
-  byte currentState = SPI.transfer(0);
-  
-  printBinary(currentState);
+  // 2. Read all chips in the chain
+  for (int chip = 0; chip < NUM_CHIPS; chip++) {
+    // Read the current chip via SPI
+    byte currentState = SPI.transfer(0);
+    byte previousState = lastChipStates[chip];
 
-  // 3. Compare with Last State
-  if (currentState != lastState) {
-    
-    // Check D0
-    if ((currentState & (1 << 0)) != (lastState & (1 << 0))) {
-       bool pressed = (currentState & (1 << 0)); // Active High
-       sendMidi(pressed ? 0x90 : 0x80, NOTE_BASE, 127);
-    }
+    // 3. If something changed on this specific chip
+    if (currentState != previousState) {
+      
+      // Iterate through all 8 bits of this chip
+      for (int i = 0; i < 8; i++) {
+        bool currentBit = (currentState >> i) & 1;
+        bool previousBit = (previousState >> i) & 1;
 
-    // Check D6
-    if (((currentState >> 6) & 1) != ((lastState >> 6) & 1)) {
-       bool pressed = ((currentState >> 6) & 1); // Active High
-       sendMidi(pressed ? 0x90 : 0x80, NOTE_BASE + 2, 127); // E4
+        // If this specific bit changed
+        if (currentBit != previousBit) {
+          // Calculate MIDI Note: Base (60) + (Chip Index * 8) + Bit Index
+          int note = NOTE_BASE + (chip * 8) + i;
+          
+          // Send Note On (0x90) if pressed, Note Off (0x80) if released
+          sendMidi(currentBit ? 0x90 : 0x80, note, 127);
+        }
+      }
+      
+      // Update LCD for this specific chip
+      updateLcdStatus(chip, currentState); 
+      
+      // Save state for next comparison
+      lastChipStates[chip] = currentState;
     }
-
-    // Check D7
-    if (((currentState >> 7) & 1) != ((lastState >> 7) & 1)) {
-       bool pressed = ((currentState >> 7) & 1); // Active High
-       sendMidi(pressed ? 0x90 : 0x80, NOTE_BASE + 4, 127); // G4
-    }
-    
-    updateLcdStatus(currentState);
-    lastState = currentState;
   }
   
-  delay(10); // Simple debounce
+  delay(5); // Reduced delay for better "Feel" (Latency)
 }
