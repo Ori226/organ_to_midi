@@ -158,21 +158,22 @@ The `mock_organ.py` script uses the `mido` library to talk to the Linux sound sy
 See the [examples/](examples/) directory for isolated test sketches.
 *   [Rhythm Simulation (rhythm_sim.ino)](examples/README.md): Plays a MIDI pattern to verify the audio pipeline.
 
+## Software & MIDI Setup (Choir Mode)
+The system is configured to play a high-quality choir sound by default.
+
+- **Soundfont Source**: [Florestan_Ahh_Choir.sf2](https://github.com/mrbid/SoundFonts) (Note: Currently leveraging the built-in `FluidR3_GM.sf2` high-quality General MIDI choir).
+- **Patch**: Program 52 (Choir Aahs).
+- **Automation**: The `simple_midi_bridge.py` automatically switches to the choir sound upon the first note press to ensure the MIDI command is registered by FluidSynth.
+
 ## Hardware Lessons Learned (Pro-Tips)
+Keep a log of common mistakes to avoid repeating them.
 
-### Avoid "Floating" Inputs
-A common mistake during assembly is connecting a pull-down resistor to the data input but **forgetting to connect the other side to Ground**. 
-*   **Result**: The pin acts as an antenna, picking up noise and causing "ghost" button presses.
-*   **Fix**: Always ensure your resistor bridges the Data Pin to either GND (Pull-down) or VCC (Pull-up).
+- **Floating Inputs**: See the [Debugging Recipe](74hc165_debugging_recipe.md) for how to correctly use resistors with the 74HC165.
+- **Daisy Chaining**: Always ensure the `SER` pin of the first chip connects to the `QH` pin of the second.
 
-For a detailed walkthrough on diagnosing this and other issues, see the [74HC165 Debugging Recipe](74hc165_debugging_recipe.md).
+## Implementation Pitfalls
+For a detailed log of software, MIDI, and hardware issues encountered, see [ELECTRONICS_PITFALLS.md](ELECTRONICS_PITFALLS.md).
 
-## Phase One: Current State
-
-The following image illustrates the current wiring state of the project (Phase One), featuring the Arduino Uno, 74HC165 Shift Register, and 3 push buttons on the breadboard.
-
-![Phase One Wiring](phase_one_wiring.jpg)
-
-### Wiring Illustration
-![Phase One Illustration](phase_one_illustration.png)
+---
+*This documentation is part of an ongoing project to build a custom MIDI organ controller.*
 
