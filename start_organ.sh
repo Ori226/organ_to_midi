@@ -1,33 +1,37 @@
 #!/bin/bash
 
 # Configuration
-BRIDGE_SCRIPT="$HOME/organ_to_midi/simple_midi_bridge.py"
+BRIDGE_SCRIPT="$(pwd)/simple_midi_bridge.py"
 SOUNDFONT="/usr/share/sounds/sf2/FluidR3_GM.sf2"
 
 echo "Stopping old processes..."
 pkill -f simple_midi_bridge.py
 pkill fluidsynth
+sleep 1
 
 echo "Starting FluidSynth..."
-nohup fluidsynth -is -a alsa -m alsa_seq "$SOUNDFONT" > /dev/null 2>&1 &
+nohup fluidsynth -is -a alsa -m alsa_seq "$SOUNDFONT" > fluidsynth.log 2>&1 &
 sleep 2
 
 echo "Starting MIDI Bridge..."
-# Use python3 directly (assuming system packages or venv is active)
-# If using venv: source $HOME/organ_to_midi/venv/bin/activate
-nohup python3 -u "$BRIDGE_SCRIPT" > /dev/null 2>&1 &
-sleep 2
+nohup python3 -u "$BRIDGE_SCRIPT" > midi_bridge.log 2>&1 &
+sleep 3
 
 echo "Connecting Ports..."
-# Loop to ensure connection
-for i in {1..10}; do
-    if aconnect 'RtMidiOut Client':0 'FLUID Synth':0 2>/dev/null; then
-        echo "SUCCESS: Connected 'RtMidiOut Client' to 'FLUID Synth'"
-        break
+# Use partial matches to find client IDs
+BRIDGE_PORT=$(aconnect -lo | grep "RtMidi" | awk '{print $2}' | cut -d':' -f1 | head -n 1)
+SYNTH_PORT=$(aconnect -li | grep "FLUID Synth" | awk '{print $2}' | cut -d':' -f1 | head -n 1)
+
+if [ -n "$BRIDGE_PORT" ] && [ -n "$SYNTH_PORT" ]; then
+    if aconnect "$BRIDGE_PORT:0" "$SYNTH_PORT:0" 2>/dev/null; then
+        echo "SUCCESS: Connected 'Arduino Bridge' ($BRIDGE_PORT) to 'FLUID Synth' ($SYNTH_PORT)"
     else
-        echo "Waiting for ports... ($i/10)"
-        sleep 1
+        echo "ERROR: Failed to connect ports."
     fi
-done
+else
+    echo "ERROR: Could not find MIDI ports. Check logs."
+    echo "BRIDGE_PORT: $BRIDGE_PORT"
+    echo "SYNTH_PORT: $SYNTH_PORT"
+fi
 
 echo "Organ is READY!"

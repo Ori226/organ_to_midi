@@ -26,10 +26,23 @@ def run_bridge():
     try:
         with mido.open_output("Arduino Bridge", virtual=True) as outport:
             print("Bridge Running! Connect this port to FluidSynth using aconnect.")
+            
+            # Give FluidSynth a moment to stabilize
+            time.sleep(1)
+            
+            # Set sound to Choir Aahs (GM Program Change 52)
+            print("Setting sound to Choir Aahs (Program 52)...")
+            outport.send(mido.Message('program_change', program=52))
+            
+            # Send it again just in case (sometimes virtual ports drop first msg)
+            time.sleep(0.5)
+            outport.send(mido.Message('program_change', program=52))
+            
             print("Listening for serial data...")
             
             # Use mido Parser to handle running status and incomplete bytes
             parser = mido.Parser()
+            choir_set = False
             
             while True:
                 if ser.in_waiting:
@@ -41,6 +54,11 @@ def run_bridge():
                         
                         # Process available messages
                         for msg in parser:
+                            if not choir_set:
+                                print("Initial activity detected. Switching to Choir Aahs (Program 52)...")
+                                outport.send(mido.Message('program_change', program=52))
+                                choir_set = True
+                                
                             print(f"Sending MIDI: {msg}")
                             outport.send(msg)
                 else:
