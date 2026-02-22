@@ -170,6 +170,24 @@ The system is configured to play a high-quality choir sound by default.
 - **Debugging Recipe**: [74hc165_debugging_recipe.md](74hc165_debugging_recipe.md).
 - **Pitfalls Log**: [ELECTRONICS_PITFALLS.md](ELECTRONICS_PITFALLS.md).
 
+## Hardware Gallery
+
+### Console Conversion
+The original analog pedalboard is being retrofitted with a centralized 15-pin breakout system.
+
+![Console Internals](file:///home/ori/.gemini/antigravity/brain/3698dc20-111b-4431-b2a5-b4d7b3d2c649/uploaded_media_2_1771746426115.jpg)
+
+### Breakout & Wiring
+A DB15 screw-terminal board simplifies the connection between the pedals and shift registers.
+
+![DB15 Breakout](file:///home/ori/.gemini/antigravity/brain/3698dc20-111b-4431-b2a5-b4d7b3d2c649/uploaded_media_1_1771746426115.jpg)
+
+### Phase One: Prototype
+Early prototype setup on a breadboard.
+
+![Phase One Wiring](phase_one_wiring.jpg)
+![Phase One Illustration](phase_one_illustration.png)
+
 ---
 *This documentation is part of an ongoing project to build a custom MIDI organ controller.*
 
